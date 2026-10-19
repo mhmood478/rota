@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#071521">
+  <title>ED On-Call | Emergency Department</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="ED On-Call home">
+        <span class="brand-mark">+</span>
+        <span><strong>ED ON-CALL</strong><small>EMERGENCY DEPARTMENT</small></span>
+      </a>
+      <div class="top-actions">
+        <span id="connectionBadge" class="status-pill status-wait">Connecting…</span>
+        <a class="button button-quiet" href="./index.html?view=display">TV display</a>
+        <a class="button button-quiet" href="./index.html?view=edit">Edit rota</a>
+      </div>
+    </header>
+
+    <main id="app" aria-live="polite">
+      <section id="authView" class="auth-layout hidden">
+        <div class="auth-card">
+          <div class="eyebrow">STAFF ACCESS</div>
+          <h1>Sign in to ED On-Call</h1>
+          <p class="muted">Use your authorized department account to view the rota or edit your specialty.</p>
+          <form id="loginForm" class="stack">
+            <label>Email address<input id="emailInput" type="email" autocomplete="username" required></label>
+            <label>Password<input id="passwordInput" type="password" autocomplete="current-password" required></label>
+            <button class="button button-primary" type="submit">Sign in securely</button>
+            <p id="authError" class="error-text" role="alert"></p>
+          </form>
+          <p class="tiny muted">Accounts are created by the Firebase project administrator. There is no public sign-up.</p>
+        </div>
+      </section>
+
+      <section id="loadingView" class="loading-panel">
+        <div class="loader"></div><p>Connecting to the live rota…</p>
+      </section>
+
+      <section id="displayView" class="hidden">
+        <div class="display-heading">
+          <div>
+            <div class="eyebrow">LIVE ON-CALL DIRECTORY</div>
+            <h1>Emergency Department</h1>
+            <p class="muted">Today's on-call team · Oman time</p>
+          </div>
+          <div class="clock-block">
+            <div id="clockTime" class="clock-time">--:--</div>
+            <div id="clockDate" class="clock-date">Loading date…</div>
+          </div>
+        </div>
+        <div class="summary-strip">
+          <span><i class="live-dot"></i> LIVE ROTA</span>
+          <span id="todayLabel">Today</span>
+          <span id="rotaCount">0 / 9 specialties updated</span>
+        </div>
+        <div id="specialtyGrid" class="specialty-grid"></div>
+        <footer class="display-footer">
+          <span>ED ON-CALL <span class="footer-dot">•</span> Asia/Muscat</span>
+          <span id="lastUpdated">Waiting for rota data</span>
+          <button id="signOutButton" class="text-button" type="button">Sign out</button>
+        </footer>
+      </section>
+
+      <section id="editView" class="hidden">
+        <div class="editor-heading">
+          <div><div class="eyebrow">ROTA MANAGEMENT</div><h1>Monthly rota editor</h1><p class="muted">Changes sync to the TV display automatically.</p></div>
+          <button id="signOutButtonEdit" class="button button-quiet" type="button">Sign out</button>
+        </div>
+        <div class="editor-toolbar panel">
+          <label>Specialty<select id="specialtySelect"></select></label>
+          <label>Month<input id="monthSelect" type="month" required></label>
+          <div class="toolbar-actions">
+            <button id="loadMonthButton" class="button button-secondary" type="button">Load month</button>
+            <button id="saveMonthButton" class="button button-primary" type="button">Save changes</button>
+          </div>
+        </div>
+        <div id="editorPermission" class="notice hidden"></div>
+        <div class="editor-meta"><span id="monthCaption">Select a month</span><span id="editorStatus" role="status">Ready</span></div>
+        <div class="table-wrap panel">
+          <table class="rota-table">
+            <thead><tr><th class="date-col">Date</th><th>First on-call doctor <span class="required-mark">*</span></th><th>First phone</th><th>Second on-call doctor</th><th>Second phone / extension</th></tr></thead>
+            <tbody id="rotaRows"></tbody>
+          </table>
+        </div>
+        <p class="tiny muted editor-note">Only dates you save are changed. Blank dates are shown as “ROTA NOT ENTERED” on the TV. Avoid entering unnecessary patient or confidential clinical information.</p>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
