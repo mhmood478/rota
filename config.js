@@ -12,7 +12,7 @@ window.APP_CONFIG = {
   },
 
   specialties: [
-    { id: "medicine", label: "Medicine", passcode: "CHANGE-MEDICINE" },
+    { id: "medicine", label: "Medicine", passcode: "123" },
     { id: "surgery", label: "Surgery", passcode: "CHANGE-SURGERY" },
     { id: "paediatrics", label: "Paediatrics", passcode: "CHANGE-PAEDIATRICS" },
     { id: "gynaecology", label: "Gynaecology", passcode: "CHANGE-GYNAECOLOGY" },
