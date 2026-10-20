@@ -3,67 +3,87 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101827">
-  <title>On-call board</title>
+  <meta name="theme-color" content="#101522">
+  <title>On-Call Board</title>
   <link rel="stylesheet" href="styles.css">
-</head>
-<body class="display-page">
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-mark">+</div>
-      <div>
-        <div class="brand-title">ON-CALL BOARD</div>
-        <div class="brand-subtitle">Emergency Department</div>
-      </div>
-    </div>
 
-    <div class="clock-block">
-      <div id="clock" class="clock">--:--</div>
-      <div id="today" class="today">Loading date…</div>
-      <div class="timezone">MCT · Shift changes at 07:00</div>
-    </div>
-
-    <button id="customizeButton" class="button button-secondary" type="button">
-      Customize display
-    </button>
-  </header>
-
-  <main class="main-content">
-    <div id="notice" class="notice" role="status"></div>
-
-    <section id="customizePanel" class="customize-panel hidden" aria-label="Display options">
-      <div class="customize-heading">
-        <div>
-          <strong>Display settings</strong>
-          <span>These settings are saved only in this browser.</span>
-        </div>
-        <button id="closeCustomize" class="icon-button" type="button" aria-label="Close">×</button>
-      </div>
-
-      <label class="color-control">
-        Accent color
-        <input id="accentPicker" type="color" value="#53d6b2">
-      </label>
-
-      <div class="arrange-heading">Arrange specialties</div>
-      <div id="arrangeList" class="arrange-list"></div>
-
-      <button id="resetDisplay" class="button button-secondary" type="button">
-        Reset display settings
-      </button>
-    </section>
-
-    <section id="specialtyGrid" class="specialty-grid" aria-label="Today's on-call doctors"></section>
-  </main>
-
-  <footer class="footer">
-    <span>On-call information · Please confirm by phone when necessary</span>
-    <span id="updatedAt"></span>
-  </footer>
-
+  <!-- Firebase browser SDK; no Node.js or build step required. -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="firebase-config.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">✚ On-Call Board</div>
+    <nav class="header-actions" aria-label="Main menu">
+      <button id="displayBtn">Display</button>
+      <button id="rotaBtn">Edit rota</button>
+      <button id="extensionsBtn">Extensions</button>
+      <button id="themeBtn" aria-label="Change color theme">☼ Light</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="displayPage">
+      <div class="topline">
+        <div>
+          <h1>Today’s on-call team</h1>
+          <p class="muted">Shift changes at 7:00 a.m.</p>
+        </div>
+        <div class="clock">
+          <div id="currentDate"></div>
+          <div id="currentTime"></div>
+        </div>
+      </div>
+      <div id="displayGrid" class="grid"></div>
+      <p id="loadStatus" class="notice">Connecting…</p>
+    </section>
+
+    <section id="rotaPage" class="hidden">
+      <div class="editor-head">
+        <div>
+          <h1>Monthly rota</h1>
+          <p class="muted">Enter the on-call team for each calendar day.</p>
+        </div>
+        <div class="editor-controls">
+          <select id="rotaSpecialty" aria-label="Specialty"></select>
+          <input id="rotaMonth" type="month" aria-label="Month">
+          <button id="clearRotaBtn" class="danger">Empty rota</button>
+          <button id="saveRotaBtn" class="primary">Save rota</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>First on-call name</th>
+              <th>First phone</th>
+              <th>Second on-call name</th>
+              <th>Second phone</th>
+            </tr>
+          </thead>
+          <tbody id="rotaRows"></tbody>
+        </table>
+      </div>
+      <p id="rotaStatus" class="status"></p>
+    </section>
+
+    <section id="extensionsPage" class="hidden">
+      <div class="editor-head">
+        <div>
+          <h1>Extensions</h1>
+          <p class="muted">These extensions are static and apply every day.</p>
+        </div>
+        <button id="saveExtensionsBtn" class="primary">Save extensions</button>
+      </div>
+      <div id="extensionsEditor" class="ext-grid"></div>
+      <p id="extensionsStatus" class="status"></p>
+    </section>
+  </main>
+
+  <footer>On-call information • Keep this display visible and easy to read</footer>
 </body>
 </html>
