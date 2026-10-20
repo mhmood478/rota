@@ -9,22 +9,19 @@
 <body class="editor-page">
   <header class="editor-header">
     <a href="index.html" class="back-link">← On-call board</a>
-    <div class="editor-brand">Monthly rota editor</div>
+    <a href="extensions.html" class="back-link">Edit extensions →</a>
   </header>
 
   <main class="editor-main">
     <section id="loginPanel" class="login-card">
       <div class="eyebrow">SPECIALTY ACCESS</div>
       <h1 id="loginTitle">Edit rota</h1>
-      <p>Enter your specialty’s passcode to open its monthly rota.</p>
+      <p>Enter the specialty passcode to edit its monthly rota.</p>
       <label class="field-label" for="specialtySelect">Specialty</label>
       <select id="specialtySelect" class="text-field"></select>
       <label class="field-label" for="passcodeInput">Passcode</label>
-      <input id="passcodeInput" class="text-field" type="password"
-             autocomplete="current-password" placeholder="Enter passcode">
-      <button id="loginButton" class="button button-primary full-width" type="button">
-        Open rota
-      </button>
+      <input id="passcodeInput" class="text-field" type="password" placeholder="Enter passcode">
+      <button id="loginButton" class="button button-primary full-width" type="button">Open rota</button>
       <div id="loginError" class="form-message error-message"></div>
     </section>
 
@@ -33,11 +30,9 @@
         <div>
           <div class="eyebrow">MONTHLY SCHEDULE</div>
           <h1 id="rotaTitle">Rota</h1>
-          <p>Fill in the on-call details for each date, then save the month.</p>
+          <p>Enter names and phone numbers. Extensions are edited separately.</p>
         </div>
-        <button id="changeSpecialty" class="button button-secondary" type="button">
-          Change specialty
-        </button>
+        <button id="changeSpecialty" class="button button-secondary" type="button">Change specialty</button>
       </div>
 
       <div class="month-toolbar">
@@ -45,6 +40,7 @@
         <input id="monthInput" class="text-field month-input" type="month">
         <button id="loadMonth" class="button button-secondary" type="button">Load month</button>
         <button id="saveMonth" class="button button-primary" type="button">Save rota</button>
+        <button id="clearMonth" class="button button-danger" type="button">Clear this month</button>
       </div>
 
       <div id="saveMessage" class="form-message"></div>
