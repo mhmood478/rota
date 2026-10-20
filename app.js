@@ -147,8 +147,11 @@ function showPage(pageId) {
   ["displayPage", "rotaPage", "extensionsPage"].forEach(id =>
     $(id).classList.add("hidden")
   );
+
   $(pageId).classList.remove("hidden");
+  document.body.classList.toggle("display-mode", pageId === "displayPage");
 }
+
 
 function openRotaEditor() {
   const choices = SPECIALTIES
@@ -273,6 +276,8 @@ async function saveExtensions() {
     $("extensionsStatus").textContent = "Save failed: " + error.message;
   }
 }
+
+document.body.classList.add("display-mode");
 
 function startApp() {
   $("rotaSpecialty").innerHTML = SPECIALTIES.map(([id, label]) =>
