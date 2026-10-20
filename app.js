@@ -149,12 +149,28 @@ function showPage(pageId) {
 }
 
 function openRotaEditor() {
-  const specialty = $("rotaSpecialty").value;
-  const label = SPECIALTIES.find(item => item[0] === specialty)[1];
+  const choices = SPECIALTIES
+    .map(([id, label], index) => `${index + 1}. ${label}`)
+    .join("\n");
+
+  const answer = prompt(`Choose a specialty by number:\n\n${choices}`);
+  if (answer === null) return;
+
+  const choice = Number(answer.trim());
+  if (!Number.isInteger(choice) || choice < 1 || choice > SPECIALTIES.length) {
+    alert("Please enter a number from 1 to " + SPECIALTIES.length + ".");
+    return;
+  }
+
+  const [specialty, label] = SPECIALTIES[choice - 1];
+
   if (!askPasscode(specialty, label)) return;
+
+  $("rotaSpecialty").value = specialty;
   showPage("rotaPage");
   loadRotaSheet();
 }
+
 
 function openExtensionsEditor() {
   if (!askPasscode("extensions", "Extensions")) return;
