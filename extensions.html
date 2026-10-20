@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit extensions</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="editor-page">
+  <header class="editor-header">
+    <a href="index.html" class="back-link">← On-call board</a>
+    <a href="editor.html" class="back-link">Edit monthly rota →</a>
+  </header>
+
+  <main class="editor-main">
+    <section id="extensionLogin" class="login-card">
+      <div class="eyebrow">SPECIALTY ACCESS</div>
+      <h1>Edit extensions</h1>
+      <p>Extensions are saved by specialty and do not change from day to day.</p>
+      <label class="field-label" for="specialtySelect">Specialty</label>
+      <select id="specialtySelect" class="text-field"></select>
+      <label class="field-label" for="passcodeInput">Passcode</label>
+      <input id="passcodeInput" class="text-field" type="password" placeholder="Enter passcode">
+      <button id="loginButton" class="button button-primary full-width" type="button">Open extensions</button>
+      <div id="loginError" class="form-message error-message"></div>
+    </section>
+
+    <section id="extensionPanel" class="login-card hidden">
+      <div class="eyebrow">STATIC CONTACT DETAILS</div>
+      <h1 id="extensionTitle">Extensions</h1>
+      <p>Enter the extension for each on-call position.</p>
+
+      <label class="field-label" for="firstExtension">1st on-call extension</label>
+      <input id="firstExtension" class="text-field" type="text" placeholder="e.g. 5123">
+
+      <label class="field-label" for="secondExtension">2nd on-call extension</label>
+      <input id="secondExtension" class="text-field" type="text" placeholder="e.g. 5124">
+
+      <button id="saveExtensions" class="button button-primary full-width" type="button">Save extensions</button>
+      <button id="changeSpecialty" class="button button-secondary full-width" type="button">Change specialty</button>
+      <div id="saveMessage" class="form-message"></div>
+    </section>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="config.js"></script>
+  <script src="extension-editor.js"></script>
+</body>
+</html>
