@@ -3,6 +3,7 @@
 const PASSCODES = {
   medicine: "med123",
   surgery: "surg123",
+  sur: "surg123",
   pediatrics: "peds123",
   gynecology: "gyn123",
   ophthalmology: "eye123",
@@ -16,6 +17,7 @@ const PASSCODES = {
 const SPECIALTIES = [
   ["medicine", "Medicine"],
   ["surgery", "Surgery"],
+  ["sur", "Surgami"],
   ["pediatrics", "Pediatrics"],
   ["gynecology", "Gynecology"],
   ["ophthalmology", "Ophthalmology"],
