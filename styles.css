@@ -39,7 +39,7 @@ body {
 button, input, select { font: inherit; }
 
 button {
-  cursor: pointer;
+  cursor;
   padding: 9px 13px;
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -187,7 +187,7 @@ footer { padding: 20px; text-align: center; color: var(--muted); font-size: .85r
 
   body.display-mode #displayGrid {
     height: calc(100% - 82px);
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-template-rows: repeat(2, minmax(0, 1fr));
     gap: 10px;
   }
@@ -228,3 +228,4 @@ footer { padding: 20px; text-align: center; color: var(--muted); font-size: .85r
     display: none;
   }
 }
+

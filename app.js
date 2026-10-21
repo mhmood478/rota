@@ -4,23 +4,23 @@ const PASSCODES = {
   medicine: "med123",
   surgery: "surg123",
   pediatrics: "peds123",
-  gynecology: "gyn123",
   ophthalmology: "eye123",
   ent: "ent123",
   dental: "dent123",
+  gynecology: "gyn123",
   nephrology: "neph123",
   psychiatry: "psych123",
-  extensions: "extensions123"
+  extensions: "ext123"
 };
 
 const SPECIALTIES = [
   ["medicine", "Medicine"],
   ["surgery", "Surgery"],
   ["pediatrics", "Pediatrics"],
-  ["gynecology", "Gynecology"],
   ["ophthalmology", "Ophthalmology"],
   ["ent", "ENT"],
   ["dental", "Dental"],
+  ["gynecology", "Gynecology"],
   ["nephrology", "Nephrology"],
   ["psychiatry", "Psychiatry"]
 ];
@@ -226,6 +226,10 @@ async function saveRota() {
       rotas: { ...(appData.rotas || {}), [month]: monthData }
     }, { merge: true });
     $("rotaStatus").textContent = "Rota saved.";
+    alert("Rota saved successfully.");
+
+    window.location.reload();
+
   } catch (error) {
     $("rotaStatus").textContent = "Save failed: " + error.message;
   }
