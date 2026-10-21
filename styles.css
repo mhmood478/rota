@@ -98,7 +98,7 @@ p { margin: 6px 0; }
 .clock { text-align: right; }
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--display-columns, 3), minmax(0, 1fr));
   gap: 14px;
 }
 .card {
@@ -228,3 +228,79 @@ footer { padding: 20px; text-align: center; color: var(--muted); font-size: .85r
     display: none;
   }
 }
+
+.display-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gear-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 1.4rem;
+}
+
+.settings-panel {
+  position: fixed;
+  z-index: 10;
+  top: 82px;
+  right: 20px;
+  width: min(340px, calc(100vw - 28px));
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.settings-panel label {
+  display: grid;
+  gap: 6px;
+  color: var(--text);
+  font-weight: 650;
+}
+
+.settings-panel small {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.settings-panel input[type="range"] {
+  min-width: 0;
+  padding: 0;
+}
+
+.settings-panel input[type="color"] {
+  height: 42px;
+  padding: 4px;
+}
+
+.settings-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-heading button {
+  padding: 5px 9px;
+}
+
+body.display-mode #displayGrid {
+  grid-template-columns: repeat(var(--display-columns, 5), minmax(0, 1fr));
+}
+
+body.display-mode .card {
+  font-size: var(--display-font-size, 100%);
+}
+
+@media (max-width: 700px) {
+  .settings-panel {
+    top: 12px;
+    right: 12px;
+  }
+}
+

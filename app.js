@@ -275,6 +275,51 @@ async function saveExtensions() {
   }
 }
 
+function applyDisplaySettings() {
+  let settings = {};
+
+  try {
+    settings = JSON.parse(localStorage.getItem("oncall-display-settings")) || {};
+  } catch {
+    settings = {};
+  }
+
+  const theme = settings.theme || "dark";
+  document.body.classList.toggle("light", theme === "light");
+
+  const accent = settings.accent || "#55d6be";
+  document.documentElement.style.setProperty("--accent", accent);
+
+  const fontSize = Number(settings.fontSize) || 100;
+  document.documentElement.style.setProperty(
+    "--display-font-size",
+    `${fontSize}%`
+  );
+
+const columns = Math.min(3, Math.max(1, Number(settings.columns) || 3));
+  document.documentElement.style.setProperty("--display-columns", columns);
+
+  $("themeSelect").value = theme;
+  $("accentPicker").value = accent;
+  $("fontSizeSlider").value = fontSize;
+  $("fontSizeValue").textContent = `${fontSize}%`;
+  $("boxWidthSlider").value = columns;
+  $("boxWidthValue").textContent = `${columns} columns`;
+}
+
+function saveDisplaySettings() {
+  const settings = {
+    theme: $("themeSelect").value,
+    accent: $("accentPicker").value,
+    fontSize: Number($("fontSizeSlider").value),
+    columns: Number($("boxWidthSlider").value)
+  };
+
+  localStorage.setItem("oncall-display-settings", JSON.stringify(settings));
+  applyDisplaySettings();
+}
+
+
 document.body.classList.add("display-mode");
 
 function startApp() {
@@ -308,6 +353,38 @@ function startApp() {
   initFirebase();
   renderDisplay();
   setInterval(renderDisplay, 30_000);
+  $("settingsBtn").onclick = () => {
+  const panel = $("settingsPanel");
+  panel.classList.toggle("hidden");
+  $("settingsBtn").setAttribute(
+    "aria-expanded",
+    String(!panel.classList.contains("hidden"))
+  );
+};
+
+$("closeSettingsBtn").onclick = () => {
+  $("settingsPanel").classList.add("hidden");
+  $("settingsBtn").setAttribute("aria-expanded", "false");
+};
+
+$("themeSelect").onchange = saveDisplaySettings;
+$("accentPicker").oninput = saveDisplaySettings;
+
+$("fontSizeSlider").oninput = () => {
+  $("fontSizeValue").textContent = `${$("fontSizeSlider").value}%`;
+  saveDisplaySettings();
+};
+
+$("boxWidthSlider").oninput = () => {
+  $("boxWidthValue").textContent = `${$("boxWidthSlider").value} columns`;
+  saveDisplaySettings();
+};
+
+$("resetSettingsBtn").onclick = () => {
+  localStorage.removeItem("oncall-display-settings");
+  applyDisplaySettings();
+};
+
 }
 
 startApp();
