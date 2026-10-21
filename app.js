@@ -307,53 +307,28 @@ const columns = Math.min(3, Math.max(1, Number(settings.columns) || 3));
   $("boxWidthValue").textContent = `${columns} columns`;
 }
 
-function saveDisplaySettings() {
-  const settings = {
-    theme: $("themeSelect").value,
-    accent: $("accentPicker").value,
-    fontSize: Number($("fontSizeSlider").value),
-    columns: Number($("boxWidthSlider").value)
-  };
+function applyDisplaySettings() {
+  let settings = {};
 
-  localStorage.setItem("oncall-display-settings", JSON.stringify(settings));
-  applyDisplaySettings();
-}
-
-
-document.body.classList.add("display-mode");
-
-function startApp() {
-  $("rotaSpecialty").innerHTML = SPECIALTIES.map(([id, label]) =>
-    `<option value="${id}">${label}</option>`
-  ).join("");
-
-  $("rotaMonth").value = monthKey();
-
-  $("displayBtn").onclick = () => showPage("displayPage");
-  $("rotaBtn").onclick = openRotaEditor;
-  $("extensionsBtn").onclick = openExtensionsEditor;
-  $("saveRotaBtn").onclick = saveRota;
-  $("clearRotaBtn").onclick = clearRota;
-  $("saveExtensionsBtn").onclick = saveExtensions;
-  $("rotaSpecialty").onchange = loadRotaSheet;
-  $("rotaMonth").onchange = loadRotaSheet;
-
-  if (localStorage.getItem("oncall-theme") === "light") {
-    document.body.classList.add("light");
-    $("themeBtn").textContent = "☾ Dark";
+  try {
+    settings = JSON.parse(localStorage.getItem("oncall-display-settings")) || {};
+  } catch {
+    settings = {};
   }
 
-  $("themeBtn").onclick = () => {
-    document.body.classList.toggle("light");
-    const light = document.body.classList.contains("light");
-    localStorage.setItem("oncall-theme", light ? "light" : "dark");
-    $("themeBtn").textContent = light ? "☾ Dark" : "☼ Light";
-  };
+  const columns = Math.min(3, Math.max(1, Number(settings.columns) || 3));
+  document.documentElement.style.setProperty("--display-columns", columns);
 
-  initFirebase();
-  renderDisplay();
-  setInterval(renderDisplay, 30_000);
-  $("settingsBtn").onclick = () => {
+  $("boxWidthSlider").value = columns;
+  $("boxWidthValue").textContent = `${columns} column${columns === 1 ? "" : "s"}`;
+}
+
+function saveDisplaySettings() {
+  const columns = Number($("boxWidthSlider").value);
+  localStorage.setItem("oncall-display-settings", JSON.stringify({ columns }));
+  applyDisplaySettings();
+}
+$("settingsBtn").onclick = () => {
   const panel = $("settingsPanel");
   panel.classList.toggle("hidden");
   $("settingsBtn").setAttribute(
@@ -367,24 +342,12 @@ $("closeSettingsBtn").onclick = () => {
   $("settingsBtn").setAttribute("aria-expanded", "false");
 };
 
-$("themeSelect").onchange = saveDisplaySettings;
-$("accentPicker").oninput = saveDisplaySettings;
-
-$("fontSizeSlider").oninput = () => {
-  $("fontSizeValue").textContent = `${$("fontSizeSlider").value}%`;
-  saveDisplaySettings();
-};
-
-$("boxWidthSlider").oninput = () => {
-  $("boxWidthValue").textContent = `${$("boxWidthSlider").value} columns`;
-  saveDisplaySettings();
-};
+$("boxWidthSlider").oninput = saveDisplaySettings;
 
 $("resetSettingsBtn").onclick = () => {
   localStorage.removeItem("oncall-display-settings");
   applyDisplaySettings();
 };
 
-}
 
 startApp();
