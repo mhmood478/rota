@@ -10,7 +10,7 @@ const PASSCODES = {
   dental: "dent123",
   nephrology: "neph123",
   psychiatry: "psych123",
-  extensions: "extensions123"
+  extensions: "ext123"
 };
 
 const SPECIALTIES = [
