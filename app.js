@@ -10,7 +10,7 @@ const PASSCODES = {
   dental: "dent123",
   nephrology: "neph123",
   psychiatry: "psych123",
-  extensions: "ext123"
+  extensions: "extensions123"
 };
 
 const SPECIALTIES = [
@@ -275,79 +275,39 @@ async function saveExtensions() {
   }
 }
 
-function applyDisplaySettings() {
-  let settings = {};
+document.body.classList.add("display-mode");
 
-  try {
-    settings = JSON.parse(localStorage.getItem("oncall-display-settings")) || {};
-  } catch {
-    settings = {};
+function startApp() {
+  $("rotaSpecialty").innerHTML = SPECIALTIES.map(([id, label]) =>
+    `<option value="${id}">${label}</option>`
+  ).join("");
+
+  $("rotaMonth").value = monthKey();
+
+  $("displayBtn").onclick = () => showPage("displayPage");
+  $("rotaBtn").onclick = openRotaEditor;
+  $("extensionsBtn").onclick = openExtensionsEditor;
+  $("saveRotaBtn").onclick = saveRota;
+  $("clearRotaBtn").onclick = clearRota;
+  $("saveExtensionsBtn").onclick = saveExtensions;
+  $("rotaSpecialty").onchange = loadRotaSheet;
+  $("rotaMonth").onchange = loadRotaSheet;
+
+  if (localStorage.getItem("oncall-theme") === "light") {
+    document.body.classList.add("light");
+    $("themeBtn").textContent = "☾ Dark";
   }
 
-  const theme = settings.theme || "dark";
-  document.body.classList.toggle("light", theme === "light");
+  $("themeBtn").onclick = () => {
+    document.body.classList.toggle("light");
+    const light = document.body.classList.contains("light");
+    localStorage.setItem("oncall-theme", light ? "light" : "dark");
+    $("themeBtn").textContent = light ? "☾ Dark" : "☼ Light";
+  };
 
-  const accent = settings.accent || "#55d6be";
-  document.documentElement.style.setProperty("--accent", accent);
-
-  const fontSize = Number(settings.fontSize) || 100;
-  document.documentElement.style.setProperty(
-    "--display-font-size",
-    `${fontSize}%`
-  );
-
-const columns = Math.min(3, Math.max(1, Number(settings.columns) || 3));
-  document.documentElement.style.setProperty("--display-columns", columns);
-
-  $("themeSelect").value = theme;
-  $("accentPicker").value = accent;
-  $("fontSizeSlider").value = fontSize;
-  $("fontSizeValue").textContent = `${fontSize}%`;
-  $("boxWidthSlider").value = columns;
-  $("boxWidthValue").textContent = `${columns} columns`;
+  initFirebase();
+  renderDisplay();
+  setInterval(renderDisplay, 30_000);
 }
-
-function applyDisplaySettings() {
-  let settings = {};
-
-  try {
-    settings = JSON.parse(localStorage.getItem("oncall-display-settings")) || {};
-  } catch {
-    settings = {};
-  }
-
-  const columns = Math.min(3, Math.max(1, Number(settings.columns) || 3));
-  document.documentElement.style.setProperty("--display-columns", columns);
-
-  $("boxWidthSlider").value = columns;
-  $("boxWidthValue").textContent = `${columns} column${columns === 1 ? "" : "s"}`;
-}
-
-function saveDisplaySettings() {
-  const columns = Number($("boxWidthSlider").value);
-  localStorage.setItem("oncall-display-settings", JSON.stringify({ columns }));
-  applyDisplaySettings();
-}
-$("settingsBtn").onclick = () => {
-  const panel = $("settingsPanel");
-  panel.classList.toggle("hidden");
-  $("settingsBtn").setAttribute(
-    "aria-expanded",
-    String(!panel.classList.contains("hidden"))
-  );
-};
-
-$("closeSettingsBtn").onclick = () => {
-  $("settingsPanel").classList.add("hidden");
-  $("settingsBtn").setAttribute("aria-expanded", "false");
-};
-
-$("boxWidthSlider").oninput = saveDisplaySettings;
-
-$("resetSettingsBtn").onclick = () => {
-  localStorage.removeItem("oncall-display-settings");
-  applyDisplaySettings();
-};
-
 
 startApp();
