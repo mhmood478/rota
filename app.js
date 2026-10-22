@@ -9,7 +9,7 @@ const PASSCODES = {
   dental: "dent123",
   gynecology: "gyn123",
   nephrology: "neph123",
-  psychiatry: "psych123",
+  psychiatry: "psch123",
   extensions: "ext123"
 };
 
