@@ -358,3 +358,37 @@ footer { padding: 20px; text-align: center; color: var(--muted); font-size: .85r
     grid-template-columns: 1fr;
   }
 }
+
+@media (min-width: 1100px) and (min-height: 650px) {
+body.display-mode #displayGrid {
+  height: 100%;
+  grid-template-columns: repeat(4, minmax(230px, 1fr));
+  grid-template-rows: none;
+  grid-auto-rows: 1fr;
+  align-content: stretch;
+  align-items: stretch;
+}
+
+  body.display-mode .card {
+    padding: 8px;
+  }
+
+  body.display-mode .card h2 {
+    margin-bottom: 3px;
+  }
+
+  body.display-mode .oncall {
+    gap: 3px;
+    padding: 4px 0;
+  }
+
+  body.display-mode .doctor {
+    font-size: clamp(.75rem, .9vw, 1rem);
+  }
+
+  body.display-mode .details,
+  body.display-mode .extension {
+    font-size: clamp(.68rem, .75vw, .9rem);
+  }
+}
+

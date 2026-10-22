@@ -17,12 +17,17 @@ const SPECIALTIES = [
   ["medicine", "Medicine", "💊", "#55d6be"],
   ["surgery", "Surgery", "🩺", "#ff8a65"],
   ["pediatrics", "Pediatrics", "🧸", "#ffd166"],
+  ["cardiology", "Cardiology", "🫀", "#b39ddb"],
+  ["orthopedics", "Orthopedics", "🦴", "#ffcc80"],
   ["ophthalmology", "Ophthalmology", "👁️", "#80aaff"],
   ["ent", "ENT", "👂", "#c792ea"],
   ["dental", "Dental", "🦷", "#4dd0e1"],
   ["gynecology", "Gynecology", "🌸", "#f48fb1"],
   ["nephrology", "Nephrology", "🫘", "#a5d6a7"],
-  ["psychiatry", "Psychiatry", "🧠", "#b39ddb"]
+  ["psychiatry", "Psychiatry", "🧠", "#b39ddb"],
+  ["anesthesia", "Anesthesia", "⚕️", "#b39ddb"],
+
+
 ];
 
 
@@ -101,17 +106,17 @@ function renderDisplay() {
     hour: "2-digit", minute: "2-digit"
   });
 
-$("displayGrid").innerHTML = SPECIALTIES.map(([id, label, icon, color]) => {
-  const entry = appData.rotas?.[month]?.[day]?.[id] || emptyEntry();
-  const ext = appData.extensions?.[id] || {};
+  $("displayGrid").innerHTML = SPECIALTIES.map(([id, label, icon, color]) => {
+    const entry = appData.rotas?.[month]?.[day]?.[id] || emptyEntry();
+    const ext = appData.extensions?.[id] || {};
 
-  return `
+    return `
     <article class="card specialty-card" style="--specialty-color: ${color}">
       <h2><span class="specialty-icon" aria-hidden="true">${icon}</span>${label}</h2>
       ${doctorBlock("First on-call", entry.firstName, entry.firstPhone, ext.first)}
       ${doctorBlock("Second on-call", entry.secondName, entry.secondPhone, ext.second)}
     </article>`;
-}).join("");
+  }).join("");
 
 }
 
@@ -127,8 +132,8 @@ function doctorBlock(role, name, phone, extension) {
       <div class="role">${role}</div>
       <div class="doctor">${escapeHtml(name || "Name not entered")}</div>
       ${phone
-        ? `<a class="details" href="tel:${escapeHtml(phone)}">${escapeHtml(phone)}</a>`
-        : ""}
+      ? `<a class="details" href="tel:${escapeHtml(phone)}">${escapeHtml(phone)}</a>`
+      : ""}
     </div>
     <div class="extension">${extension ? "Ext. " + escapeHtml(extension) : ""}</div>
   </div>`;
@@ -316,5 +321,7 @@ function startApp() {
   renderDisplay();
   setInterval(renderDisplay, 30_000);
 }
+
+
 
 startApp();
