@@ -392,3 +392,129 @@ body.display-mode #displayGrid {
   }
 }
 
+/* Polished visual refresh */
+:root {
+  --bg: #0b1020;
+  --panel: #141d30;
+  --panel2: #1b2940;
+  --text: #f4f7ff;
+  --muted: #aab8ce;
+  --line: #2b3a54;
+  --accent: #58e1c1;
+  --accent2: #8daeff;
+  --danger: #ff7b89;
+  --shadow: 0 16px 40px #02061766;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 10% 0%, #19324a 0, transparent 40%),
+    radial-gradient(ellipse at 95% 15%, #25254a 0, transparent 35%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+body.light {
+  background:
+    radial-gradient(ellipse at 10% 0%, #d8f5f0 0, transparent 42%),
+    radial-gradient(ellipse at 95% 15%, #e3eaff 0, transparent 38%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+.brand {
+  letter-spacing: .02em;
+}
+
+.card,
+.common-extensions {
+  border-radius: 18px;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--panel) 96%, white 4%),
+    var(--panel)
+  );
+  box-shadow: var(--shadow);
+}
+
+.specialty-card {
+  border-top-width: 4px;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.specialty-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 44px #02061780;
+}
+
+.specialty-card h2 {
+  letter-spacing: .01em;
+}
+
+.specialty-icon {
+  border: 1px solid color-mix(in srgb, var(--specialty-color) 32%, transparent);
+}
+
+button {
+  border-radius: 11px;
+  transition: transform .15s ease, background-color .15s ease, border-color .15s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button.primary {
+  box-shadow: 0 5px 16px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--accent2);
+  outline-offset: 2px;
+}
+
+input,
+select {
+  border-radius: 10px;
+}
+
+.common-extensions h2 {
+  color: var(--accent);
+}
+
+.extension-list li {
+  transition: transform .15s ease, border-color .15s ease;
+}
+
+.extension-list li:hover {
+  transform: translateX(3px);
+  border-color: var(--accent2);
+}
+
+.table-wrap {
+  box-shadow: var(--shadow);
+}
+
+th {
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
