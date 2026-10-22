@@ -14,16 +14,17 @@ const PASSCODES = {
 };
 
 const SPECIALTIES = [
-  ["medicine", "Medicine"],
-  ["surgery", "Surgery"],
-  ["pediatrics", "Pediatrics"],
-  ["ophthalmology", "Ophthalmology"],
-  ["ent", "ENT"],
-  ["dental", "Dental"],
-  ["gynecology", "Gynecology"],
-  ["nephrology", "Nephrology"],
-  ["psychiatry", "Psychiatry"]
+  ["medicine", "Medicine", "💊", "#55d6be"],
+  ["surgery", "Surgery", "🩺", "#ff8a65"],
+  ["pediatrics", "Pediatrics", "🧸", "#ffd166"],
+  ["ophthalmology", "Ophthalmology", "👁️", "#80aaff"],
+  ["ent", "ENT", "👂", "#c792ea"],
+  ["dental", "Dental", "🦷", "#4dd0e1"],
+  ["gynecology", "Gynecology", "🌸", "#f48fb1"],
+  ["nephrology", "Nephrology", "🫘", "#a5d6a7"],
+  ["psychiatry", "Psychiatry", "🧠", "#b39ddb"]
 ];
+
 
 const $ = id => document.getElementById(id);
 const defaultExtensions = Object.fromEntries(
@@ -100,16 +101,18 @@ function renderDisplay() {
     hour: "2-digit", minute: "2-digit"
   });
 
-  $("displayGrid").innerHTML = SPECIALTIES.map(([id, label]) => {
-    const entry = appData.rotas?.[month]?.[day]?.[id] || emptyEntry();
-    const ext = appData.extensions?.[id] || {};
-    return `
-      <article class="card">
-        <h2>${label}</h2>
-        ${doctorBlock("First on-call", entry.firstName, entry.firstPhone, ext.first)}
-        ${doctorBlock("Second on-call", entry.secondName, entry.secondPhone, ext.second)}
-      </article>`;
-  }).join("");
+$("displayGrid").innerHTML = SPECIALTIES.map(([id, label, icon, color]) => {
+  const entry = appData.rotas?.[month]?.[day]?.[id] || emptyEntry();
+  const ext = appData.extensions?.[id] || {};
+
+  return `
+    <article class="card specialty-card" style="--specialty-color: ${color}">
+      <h2><span class="specialty-icon" aria-hidden="true">${icon}</span>${label}</h2>
+      ${doctorBlock("First on-call", entry.firstName, entry.firstPhone, ext.first)}
+      ${doctorBlock("Second on-call", entry.secondName, entry.secondPhone, ext.second)}
+    </article>`;
+}).join("");
+
 }
 
 function doctorBlock(role, name, phone, extension) {

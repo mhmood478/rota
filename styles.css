@@ -229,3 +229,132 @@ footer { padding: 20px; text-align: center; color: var(--muted); font-size: .85r
   }
 }
 
+.specialty-card {
+  border-top: 4px solid var(--specialty-color, var(--accent));
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.specialty-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px #0005;
+}
+
+.specialty-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.specialty-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--specialty-color) 18%, transparent);
+  font-size: 1.25rem;
+}
+
+.specialty-card .role {
+  color: var(--specialty-color, var(--accent));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .specialty-card {
+    transition: none;
+  }
+}
+
+.display-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 245px;
+  align-items: start;
+  gap: 14px;
+}
+
+.common-extensions {
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.common-extensions h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.extension-list {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.extension-list li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--panel2);
+}
+
+.extension-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--accent2) 18%, transparent);
+}
+
+.extension-list strong {
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+
+@media (max-width: 950px) {
+  .display-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1100px) and (min-height: 650px) {
+  body.display-mode .display-layout {
+    height: calc(100% - 82px);
+    grid-template-columns: minmax(0, 1fr) 235px;
+  }
+
+  body.display-mode #displayGrid {
+    height: 100%;
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+
+  body.display-mode .common-extensions {
+    height: 100%;
+    padding: 12px;
+  }
+
+  body.display-mode .extension-list {
+    gap: 7px;
+  }
+
+  body.display-mode .extension-list li {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 620px) {
+  .display-layout {
+    grid-template-columns: 1fr;
+  }
+}
