@@ -39,7 +39,7 @@ body {
 button, input, select { font: inherit; }
 
 button {
-  cursor;
+  cursor: pointer;
   padding: 9px 13px;
   border: 1px solid var(--line);
   border-radius: 10px;
