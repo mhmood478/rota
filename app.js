@@ -106,7 +106,20 @@ function renderDisplay() {
     hour: "2-digit", minute: "2-digit"
   });
 
-  $("displayGrid").innerHTML = SPECIALTIES.map(([id, label, icon, color]) => {
+  const rowsView = document.body.classList.contains("rows-view");
+  $("displayGrid").innerHTML = rowsView
+    ? `<div class="oncall-table-wrap"><table class="oncall-table">
+        <thead><tr><th>Specialty</th><th>1st on-call</th><th>2nd on-call</th></tr></thead>
+        <tbody>${SPECIALTIES.map(([id, label, icon, color]) => {
+          const entry = appData.rotas?.[month]?.[day]?.[id] || emptyEntry();
+          const ext = appData.extensions?.[id] || {};
+          return `<tr style="--specialty-color:${color}">
+            <td class="table-specialty"><span class="specialty-icon" aria-hidden="true">${icon}</span>${label}</td>
+            <td>${tableDoctor(entry.firstName, entry.firstPhone, ext.first)}</td>
+            <td>${tableDoctor(entry.secondName, entry.secondPhone, ext.second)}</td>
+          </tr>`;
+        }).join("")}</tbody></table></div>`
+    : SPECIALTIES.map(([id, label, icon, color]) => {
     const entry = appData.rotas?.[month]?.[day]?.[id] || emptyEntry();
     const ext = appData.extensions?.[id] || {};
 
@@ -118,6 +131,23 @@ function renderDisplay() {
     </article>`;
   }).join("");
 
+}
+
+function tableDoctor(name, phone, extension) {
+  if (!name && !phone && !extension) return `<span class="empty">Not entered</span>`;
+  return `<div class="table-doctor"><span class="doctor">${escapeHtml(name || "Name not entered")}</span>
+    ${phone ? `<a class="details" href="tel:${escapeHtml(phone)}">${escapeHtml(phone)}</a>` : ""}
+    ${extension ? `<span class="extension">Ext. ${escapeHtml(extension)}</span>` : ""}</div>`;
+}
+
+function setDisplayView(view) {
+  const rows = view === "rows";
+  document.body.classList.toggle("rows-view", rows);
+  $("cardsViewBtn").classList.toggle("active", !rows);
+  $("rowsViewBtn").classList.toggle("active", rows);
+  $("cardsViewBtn").setAttribute("aria-pressed", String(!rows));
+  $("rowsViewBtn").setAttribute("aria-pressed", String(rows));
+  renderDisplay();
 }
 
 function doctorBlock(role, name, phone, extension) {
@@ -297,6 +327,10 @@ function startApp() {
   $("rotaMonth").value = monthKey();
 
   $("displayBtn").onclick = () => showPage("displayPage");
+  $("cardsViewBtn").onclick = () => setDisplayView("cards");
+  $("rowsViewBtn").onclick = () => setDisplayView("rows");
+  // Always start in Cards view after a page load or refresh.
+  setDisplayView("cards");
   $("rotaBtn").onclick = openRotaEditor;
   $("extensionsBtn").onclick = openExtensionsEditor;
   $("saveRotaBtn").onclick = saveRota;

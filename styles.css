@@ -519,3 +519,49 @@ th {
   }
 }
 
+
+/* Display layout switcher */
+.display-tools { display:flex; align-items:center; gap:18px; }
+.view-toggle { display:flex; gap:4px; padding:4px; border:1px solid var(--line); border-radius:12px; background:var(--panel); }
+.view-toggle-btn { display:flex; align-items:center; gap:7px; padding:7px 12px; border:1px solid transparent; border-radius:8px; color:var(--muted); background:transparent; font-weight:700; }
+.view-toggle-btn.active { color:var(--text); background:var(--panel2); border-color:var(--line); box-shadow:0 2px 8px #0002; }
+.view-toggle-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+#displayGrid.rows-view { display:block; height:auto; }
+.oncall-table-wrap { overflow:auto; border:1px solid var(--line); border-radius:14px; background:var(--panel); box-shadow:var(--shadow); }
+.oncall-table { width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; }
+.oncall-table th { padding:12px 18px; text-align:left; background:var(--panel2); color:var(--muted); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; }
+.oncall-table th:first-child { width:24%; }
+.oncall-table td { padding:10px 18px; border-bottom:1px solid var(--line); vertical-align:middle; }
+.oncall-table tbody tr:last-child td { border-bottom:0; }
+.oncall-table tbody tr:nth-child(even) { background:color-mix(in srgb, var(--panel2) 42%, transparent); }
+.table-specialty { display:flex; align-items:center; gap:12px; font-weight:800; white-space:nowrap; }
+.table-specialty .specialty-icon { width:32px; height:32px; flex-basis:32px; border-radius:10px; font-size:1rem; }
+.table-doctor { display:flex; align-items:baseline; flex-wrap:wrap; gap:8px 14px; }
+.table-doctor .doctor { font-size:1.05rem; }
+.table-doctor .details { font-size:.95rem; text-decoration:none; }
+.table-doctor .details:hover { color:var(--accent); text-decoration:underline; }
+.table-doctor .extension { font-size:.82rem; }
+/* Rows view must override every desktop/mobile card-grid column rule. */
+body.display-mode.rows-view #displayGrid {
+  display: block;
+  height: auto;
+  min-height: 0;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  grid-template-rows: none;
+}
+body.display-mode.rows-view .display-layout {
+  height: auto;
+  min-height: 0;
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+}
+body.display-mode.rows-view .oncall-table-wrap { display:block; width:100%; max-width:100%; }
+body.display-mode.rows-view .oncall-table { width:100%; }
+body.display-mode.rows-view .common-extensions { height:auto; }
+body.display-mode.rows-view .topline { height:auto; min-height:72px; }
+@media (max-width:800px) {
+  .display-tools { align-items:flex-start; flex-direction:column-reverse; gap:10px; }
+  .oncall-table { min-width:680px; }
+}

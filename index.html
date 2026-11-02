@@ -32,9 +32,15 @@
           <p class="muted">Shift changes at 7:00 a.m.</p>
         </div>
         
-        <div class="clock">
-          <div id="currentDate"></div>
-          <div id="currentTime"></div>
+        <div class="display-tools">
+          <div class="view-toggle" role="group" aria-label="Display layout">
+            <button id="cardsViewBtn" class="view-toggle-btn active" type="button" aria-pressed="true" title="Card view">▦ <span>Cards</span></button>
+            <button id="rowsViewBtn" class="view-toggle-btn" type="button" aria-pressed="false" title="Row view">☷ <span>Rows</span></button>
+          </div>
+          <div class="clock">
+            <div id="currentDate"></div>
+            <div id="currentTime"></div>
+          </div>
         </div>
       </div>
 
