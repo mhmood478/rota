@@ -118,13 +118,14 @@ p { margin: 6px 0; }
 }
 .role {
   color: var(--accent);
-  font-size: .75rem;
+  font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
-.doctor { font-size: 1.2rem; font-weight: 750; overflow-wrap: anywhere; }
-.details { color: var(--muted); font-size: .92rem; overflow-wrap: anywhere; }
+.doctor { font-size: 1rem; font-weight: 750; overflow-wrap: anywhere; }
+.details { color: var(--muted);   text-decoration: none;
+font-weight: 600; letter-spacing: 0.17em; font-size: 1.05rem; overflow-wrap: anywhere; }
 .extension { color: var(--accent2); font-size: 1.1rem; font-weight: 800; }
 .empty { padding: 8px 0; color: var(--muted); font-style: italic; }
 .notice { margin: 12px 0; color: var(--muted); }
@@ -564,4 +565,65 @@ body.display-mode.rows-view .topline { height:auto; min-height:72px; }
 @media (max-width:800px) {
   .display-tools { align-items:flex-start; flex-direction:column-reverse; gap:10px; }
   .oncall-table { min-width:680px; }
+}
+
+/* In rows view, keep the common extensions panel beside the rota on wide screens. */
+@media (min-width: 1000px) {
+  body.display-mode.rows-view .display-layout {
+    grid-template-columns: minmax(10%, 15fr) minmax(12%, 4fr);
+    align-items: start;
+    gap: 12px;
+  }
+
+  body.display-mode.rows-view #displayGrid,
+  body.display-mode.rows-view .oncall-table-wrap {
+    width: 100%;
+    min-width: 0;
+  }
+
+  body.display-mode.rows-view .oncall-table {
+    min-width: 0;
+  }
+
+  body.display-mode.rows-view .common-extensions {
+    min-width: 0;
+    padding: 9px;
+  }
+
+  body.display-mode.rows-view .common-extensions h2 {
+    font-size: .88rem;
+    line-height: 1.25;
+    padding-bottom: 8px;
+  }
+
+  body.display-mode.rows-view .extension-list {
+    gap: 6px;
+  }
+
+  body.display-mode.rows-view .extension-list li {
+    min-width: 0;
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+    font-size: .76rem;
+    overflow-wrap: anywhere;
+  }
+
+  body.display-mode.rows-view .extension-icon {
+    display: grid;
+    flex: 0 0 30px;
+  }
+
+  body.display-mode.rows-view .extension-list strong {
+    font-size: .8rem;
+  }
+}
+
+
+/* More prominent phone numbers in Rows view */
+body.display-mode.rows-view .table-doctor .details {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: .02em;
 }
