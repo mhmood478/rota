@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101522">
-<title>Rustaq Hospital Emergency Department</title>
+  <title>Rustaq Hospital Emergency Department</title>
   <link rel="stylesheet" href="styles.css">
 
   <!-- Firebase browser SDK; no Node.js or build step required. -->
@@ -13,6 +14,7 @@
   <script src="firebase-config.js"></script>
   <script defer src="app.js"></script>
 </head>
+
 <body>
   <header class="app-header">
     <div class="brand"> ✚ Rustaq Hospital On-Call Board</div>
@@ -31,11 +33,13 @@
           <h1>Today’s on-call team</h1>
           <p class="muted">Shift changes at 7:00 a.m.</p>
         </div>
-        
+
         <div class="display-tools">
           <div class="view-toggle" role="group" aria-label="Display layout">
-            <button id="cardsViewBtn" class="view-toggle-btn active" type="button" aria-pressed="true" title="Card view">▦ <span>Cards</span></button>
-            <button id="rowsViewBtn" class="view-toggle-btn" type="button" aria-pressed="false" title="Row view">☷ <span>Rows</span></button>
+            <button id="cardsViewBtn" class="view-toggle-btn active" type="button" aria-pressed="true"
+              title="Card view">▦ <span>Cards</span></button>
+            <button id="rowsViewBtn" class="view-toggle-btn" type="button" aria-pressed="false" title="Row view">☷
+              <span>Rows</span></button>
           </div>
           <div class="clock">
             <div id="currentDate"></div>
@@ -45,29 +49,29 @@
       </div>
 
       <div class="display-layout">
-  <div id="displayGrid" class="grid"></div>
+        <div id="displayGrid" class="grid"></div>
 
-  <aside class="common-extensions" aria-labelledby="commonExtensionsTitle">
-    <h2 id="commonExtensionsTitle">☎ Common extensions</h2>
-    <ul class="extension-list">
-      <li><span class="extension-icon">🩻</span><span>X-ray</span><strong>4605</strong></li>
-      <li><span class="extension-icon">🧠</span><span>CT</span><strong>4813</strong></li>
-      <li><span class="extension-icon">📋</span><span>Medical records</span><strong>5242</strong></li>
-      <li><span class="extension-icon">🧑‍💼</span><span>Supervisor</span><strong>555</strong></li>
-      <li><span class="extension-icon">🛡️</span><span>PRO</span><strong>5006</strong></li>
+        <aside class="common-extensions" aria-labelledby="commonExtensionsTitle">
+          <h2 id="commonExtensionsTitle">☎ Common extensions</h2>
+          <ul class="extension-list">
+            <li><span class="extension-icon">🩻</span><span>X-ray</span><strong>4605</strong></li>
+            <li><span class="extension-icon">🧠</span><span>CT</span><strong>4813</strong></li>
+            <li><span class="extension-icon">📋</span><span>Medical records</span><strong>5242</strong></li>
+            <li><span class="extension-icon">🧑‍💼</span><span>Supervisor</span><strong>555</strong></li>
+            <li><span class="extension-icon">🛡️</span><span>PRO</span><strong>5006</strong></li>
 
-      <li><span class="extension-icon">🧪</span><span>Laboratory</span><strong>----</strong></li>
-<li><span class="extension-icon">🩸</span><span>Blood Bank</span><strong>----</strong></li>
-<li><span class="extension-icon">💊</span><span>Pharmacy</span><strong>----</strong></li>
-<li><span class="extension-icon">🧹</span><span>Housekeeping</span><strong>----</strong></li>
-<li><span class="extension-icon">🔧</span><span>Maintenance</span><strong>----</strong></li>
+            <li><span class="extension-icon">🧪</span><span>Laboratory</span><strong>----</strong></li>
+            <li><span class="extension-icon">🩸</span><span>Blood Bank</span><strong>----</strong></li>
+            <li><span class="extension-icon">💊</span><span>Pharmacy</span><strong>----</strong></li>
+            <li><span class="extension-icon">🧹</span><span>Housekeeping</span><strong>----</strong></li>
+            <li><span class="extension-icon">🔧</span><span>Maintenance</span><strong>----</strong></li>
 
 
 
-      <!-- Add more extensions by copying a <li> above and editing its contents. -->
-    </ul>
-  </aside>
-</div>
+            <!-- Add more extensions by copying a <li> above and editing its contents. -->
+          </ul>
+        </aside>
+      </div>
 
       <p id="loadStatus" class="notice">Connecting…</p>
     </section>
@@ -118,4 +122,5 @@
 
   <footer>On-call information • Keep this display visible and easy to read</footer>
 </body>
+
 </html>
