@@ -4,13 +4,17 @@ const PASSCODES = {
   medicine: "med123",
   surgery: "surg123",
   pediatrics: "peds123",
+  cardiology: "card123",
+  orthopedics: "ortho123",
   ophthalmology: "eye123",
   ent: "ent123",
   dental: "dent123",
   gynecology: "gyn123",
   nephrology: "neph123",
   psychiatry: "psch123",
+  anesthesia: "anes123",
   extensions: "ext123"
+  
 };
 
 const SPECIALTIES = [
