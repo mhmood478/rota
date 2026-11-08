@@ -337,6 +337,7 @@ async function saveDoctorDirectory() {
     appData.doctors[specialty] = doctors;
     directoryDirty = false;
     $("directoryStatus").textContent = "Doctor directory saved ✓";
+    alert("✅ Doctor directory saved successfully!");
     // Preserve unsaved monthly entries while refreshing dropdown choices.
     $("rotaRows").querySelectorAll("tr[data-day]").forEach(row => {
       for (const role of ["first", "second"]) {
@@ -346,7 +347,11 @@ async function saveDoctorDirectory() {
         select.innerHTML = doctorOptions(specialty, role, name, phone);
       }
     });
-  } catch (error) { $("directoryStatus").textContent = "Save failed: " + error.message; }
+  } catch (error) {
+  $("directoryStatus").textContent = "Save failed: " + error.message;
+  alert("❌ Failed to save doctor directory:\n" + error.message);
+}
+
 }
 
 async function saveRota() {
@@ -366,7 +371,13 @@ async function saveRota() {
     await recordRef().update(updates);
     rotaDirty = false;
     $("rotaStatus").textContent = "Rota saved successfully ✓";
-  } catch (error) { $("rotaStatus").textContent = "Save failed: " + error.message; }
+    alert("✅ Rota saved successfully!");
+  
+    } catch (error) {
+  $("rotaStatus").textContent = "Save failed: " + error.message;
+  alert("❌ Failed to save rota:\n" + error.message);
+}
+
 }
 
 async function clearRota() {
@@ -410,8 +421,10 @@ async function saveExtensions() {
   try {
     await recordRef().set({ extensions }, { merge: true });
     $("extensionsStatus").textContent = "Extensions saved.";
+    alert("✅ Extensions saved successfully!");
   } catch (error) {
     $("extensionsStatus").textContent = "Save failed: " + error.message;
+    alert("❌ Failed to save extensions:\n" + error.message);
   }
 }
 
