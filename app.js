@@ -37,7 +37,9 @@ const defaultExtensions = Object.fromEntries(
 );
 
 let db = null;
-let appData = { rotas: {}, extensions: defaultExtensions };
+let appData = { rotas: {}, extensions: defaultExtensions, doctors: {} };
+let rotaDirty = false;
+let directoryDirty = false;
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -77,10 +79,14 @@ function initFirebase() {
 
     appData.rotas ||= {};
     appData.extensions ||= defaultExtensions;
+    appData.doctors ||= {};
     $("loadStatus").textContent = "Live data connected.";
     renderDisplay();
 
-    if (!$("rotaPage").classList.contains("hidden")) loadRotaSheet();
+    if (!$("rotaPage").classList.contains("hidden")) {
+      if (!rotaDirty) loadRotaSheet();
+      if (!directoryDirty) renderDoctorDirectory();
+    }
     if (!$("extensionsPage").classList.contains("hidden")) renderExtensionsEditor();
   }, error => {
     $("loadStatus").textContent = "Could not load shared data: " + error.message;
@@ -210,6 +216,7 @@ function openRotaEditor() {
   $("rotaSpecialty").value = specialty;
   showPage("rotaPage");
   loadRotaSheet();
+  renderDoctorDirectory();
 }
 
 
@@ -219,6 +226,19 @@ function openExtensionsEditor() {
   renderExtensionsEditor();
 }
 
+// Directory entries are scoped to specialty and first/second on-call role.
+// Each doctor has a stable ID, so changing a name does not break selections.
+function directoryFor(specialty, role) {
+  return appData.doctors?.[specialty]?.[role] || [];
+}
+function doctorOptions(specialty, role, entryName, entryPhone) {
+  const doctors = directoryFor(specialty, role);
+  const matched = doctors.find(d => d.name === entryName && d.phone === entryPhone);
+  const selectedId = matched?.id || (entryName || entryPhone ? "__manual__" : "");
+  return `<option value="">— Select doctor —</option>` +
+    doctors.map(d => `<option value="${escapeHtml(d.id)}" ${selectedId === d.id ? "selected" : ""}>${escapeHtml(d.name)}${d.phone ? " · " + escapeHtml(d.phone) : ""}</option>`).join("") +
+    `<option value="__manual__" ${selectedId === "__manual__" ? "selected" : ""}>✎ Manual / existing entry</option>`;
+}
 function loadRotaSheet() {
   const [year, monthNumber] = selectedMonth().split("-").map(Number);
   const count = new Date(year, monthNumber, 0).getDate();
@@ -226,56 +246,130 @@ function loadRotaSheet() {
   const specialty = $("rotaSpecialty").value;
   const monthName = new Date(year, monthNumber - 1, 1)
     .toLocaleString(undefined, { month: "short" });
-
   $("rotaRows").innerHTML = Array.from({ length: count }, (_, index) => {
     const day = index + 1;
     const entry = monthData[String(day)]?.[specialty] || emptyEntry();
-
-    return `<tr data-day="${day}">
-      <td>${String(day).padStart(2, "0")} ${monthName}</td>
-      <td><input data-field="firstName" value="${escapeHtml(entry.firstName)}" placeholder="Doctor name"></td>
-      <td><input data-field="firstPhone" value="${escapeHtml(entry.firstPhone)}" placeholder="Phone" inputmode="tel"></td>
-      <td><input data-field="secondName" value="${escapeHtml(entry.secondName)}" placeholder="Doctor name"></td>
-      <td><input data-field="secondPhone" value="${escapeHtml(entry.secondPhone)}" placeholder="Phone" inputmode="tel"></td>
-    </tr>`;
+    const roleCell = role => {
+      const name = entry[role + "Name"] || "";
+      const phone = entry[role + "Phone"] || "";
+      return `<td class="doctor-pick-cell">
+        <select class="doctor-picker" data-role="${role}" aria-label="${role} on-call doctor, day ${day}">
+          ${doctorOptions(specialty, role, name, phone)}
+        </select>
+        <div class="doctor-fields">
+          <input data-field="${role}Name" value="${escapeHtml(name)}" placeholder="Doctor name" aria-label="${role} doctor name, day ${day}">
+          <input data-field="${role}Phone" value="${escapeHtml(phone)}" placeholder="Phone number" inputmode="tel" aria-label="${role} phone, day ${day}">
+        </div>
+      </td>`;
+    };
+    return `<tr data-day="${day}"><td class="rota-day">${String(day).padStart(2, "0")} ${monthName}</td>
+      ${roleCell("first")}${roleCell("second")}</tr>`;
   }).join("");
-
+  rotaDirty = false;
   $("rotaStatus").textContent = `${count} days • ${selectedMonth()}`;
 }
 
-async function saveRota() {
-  if (!db) return alert("Add your Firebase configuration first.");
+function handleRotaChange(event) {
+  const target = event.target;
+  const row = target.closest("tr[data-day]");
+  if (!row) return;
+  rotaDirty = true;
+  if (target.matches(".doctor-picker")) {
+    const role = target.dataset.role;
+    const doctor = directoryFor($("rotaSpecialty").value, role)
+      .find(d => d.id === target.value);
+    if (doctor) {
+      row.querySelector(`[data-field="${role}Name"]`).value = doctor.name;
+      row.querySelector(`[data-field="${role}Phone"]`).value = doctor.phone;
+    } else if (!target.value) {
+      row.querySelector(`[data-field="${role}Name"]`).value = "";
+      row.querySelector(`[data-field="${role}Phone"]`).value = "";
+    }
+  } else if (target.matches("input[data-field]")) {
+    const role = target.dataset.field.startsWith("first") ? "first" : "second";
+    row.querySelector(`select[data-role="${role}"]`).value = "__manual__";
+  }
+  $("rotaStatus").textContent = "Unsaved rota changes";
+}
 
+function renderDoctorDirectory() {
+  const specialty = $("rotaSpecialty").value;
+  $("directorySpecialtyName").textContent = SPECIALTIES.find(([id]) => id === specialty)?.[1] || specialty;
+  $("doctorDirectory").innerHTML = ["first", "second"].map(role => {
+    const rows = directoryFor(specialty, role);
+    return `<div class="directory-role"><h3>${role === "first" ? "1st" : "2nd"} on-call doctors</h3>
+      <div class="directory-list" data-role="${role}">
+        ${rows.map(d => `<div class="directory-doctor" data-id="${escapeHtml(d.id)}">
+          <input class="directory-name" value="${escapeHtml(d.name)}" placeholder="Doctor name" aria-label="Doctor name">
+          <input class="directory-phone" value="${escapeHtml(d.phone)}" placeholder="Phone number" inputmode="tel" aria-label="Doctor phone">
+          <button type="button" class="directory-remove danger" title="Remove doctor">✕</button>
+        </div>`).join("")}
+      </div>
+      <button type="button" class="directory-add" data-role="${role}">＋ Add doctor</button>
+    </div>`;
+  }).join("");
+  directoryDirty = false;
+}
+
+function collectDirectory() {
+  const result = { first: [], second: [] };
+  $("doctorDirectory").querySelectorAll(".directory-list").forEach(list => {
+    const role = list.dataset.role;
+    list.querySelectorAll(".directory-doctor").forEach(row => {
+      const name = row.querySelector(".directory-name").value.trim();
+      const phone = row.querySelector(".directory-phone").value.trim();
+      if (name) result[role].push({ id: row.dataset.id, name, phone });
+    });
+  });
+  return result;
+}
+
+async function saveDoctorDirectory() {
+  if (!db) return alert("Firebase is not connected.");
+  const specialty = $("rotaSpecialty").value;
+  const doctors = collectDirectory();
+  try {
+    await recordRef().update({ [`doctors.${specialty}`]: doctors });
+    appData.doctors[specialty] = doctors;
+    directoryDirty = false;
+    $("directoryStatus").textContent = "Doctor directory saved ✓";
+    // Preserve unsaved monthly entries while refreshing dropdown choices.
+    $("rotaRows").querySelectorAll("tr[data-day]").forEach(row => {
+      for (const role of ["first", "second"]) {
+        const select = row.querySelector(`select[data-role="${role}"]`);
+        const name = row.querySelector(`[data-field="${role}Name"]`).value;
+        const phone = row.querySelector(`[data-field="${role}Phone"]`).value;
+        select.innerHTML = doctorOptions(specialty, role, name, phone);
+      }
+    });
+  } catch (error) { $("directoryStatus").textContent = "Save failed: " + error.message; }
+}
+
+async function saveRota() {
+  if (!db) return alert("Firebase is not connected.");
   const month = selectedMonth();
   const specialty = $("rotaSpecialty").value;
-  const monthData = { ...(appData.rotas?.[month] || {}) };
-
-  document.querySelectorAll("#rotaRows tr").forEach(row => {
+  const updates = {};
+  document.querySelectorAll("#rotaRows tr[data-day]").forEach(row => {
     const entry = {};
-    row.querySelectorAll("input").forEach(input => {
+    row.querySelectorAll("input[data-field]").forEach(input => {
       entry[input.dataset.field] = input.value.trim();
     });
-    monthData[row.dataset.day] ||= {};
-    monthData[row.dataset.day][specialty] = entry;
+    // Update only this specialty/day: do not overwrite other departments' rotas.
+    updates[`rotas.${month}.${row.dataset.day}.${specialty}`] = entry;
   });
-
   try {
-    await recordRef().set({
-      rotas: { ...(appData.rotas || {}), [month]: monthData }
-    }, { merge: true });
-    $("rotaStatus").textContent = "Rota saved.";
-    alert("Rota saved successfully.");
-
-    window.location.reload();
-
-  } catch (error) {
-    $("rotaStatus").textContent = "Save failed: " + error.message;
-  }
+    await recordRef().update(updates);
+    rotaDirty = false;
+    $("rotaStatus").textContent = "Rota saved successfully ✓";
+  } catch (error) { $("rotaStatus").textContent = "Save failed: " + error.message; }
 }
 
 async function clearRota() {
   if (!confirm("Empty this specialty’s entire monthly rota?")) return;
-  document.querySelectorAll("#rotaRows input").forEach(input => input.value = "");
+  document.querySelectorAll("#rotaRows input[data-field]").forEach(input => input.value = "");
+  document.querySelectorAll("#rotaRows .doctor-picker").forEach(select => select.value = "");
+  rotaDirty = true;
   await saveRota();
 }
 
@@ -334,10 +428,52 @@ function startApp() {
   $("rotaBtn").onclick = openRotaEditor;
   $("extensionsBtn").onclick = openExtensionsEditor;
   $("saveRotaBtn").onclick = saveRota;
+  $("rotaRows").addEventListener("input", handleRotaChange);
+  $("rotaRows").addEventListener("change", handleRotaChange);
+  $("saveDirectoryBtn").onclick = saveDoctorDirectory;
+  $("doctorDirectory").addEventListener("input", () => {
+    directoryDirty = true;
+    $("directoryStatus").textContent = "Unsaved directory changes";
+  });
+  $("doctorDirectory").addEventListener("click", event => {
+    const add = event.target.closest(".directory-add");
+    const remove = event.target.closest(".directory-remove");
+    if (add) {
+      const list = $("doctorDirectory").querySelector(`.directory-list[data-role="${add.dataset.role}"]`);
+      const row = document.createElement("div");
+      row.className = "directory-doctor";
+      row.dataset.id = crypto.randomUUID();
+      row.innerHTML = `<input class="directory-name" placeholder="Doctor name" aria-label="Doctor name"><input class="directory-phone" placeholder="Phone number" inputmode="tel" aria-label="Doctor phone"><button type="button" class="directory-remove danger" title="Remove doctor">✕</button>`;
+      list.append(row);
+      row.querySelector("input").focus();
+    }
+    if (remove && confirm("Remove this doctor from the dropdown? Existing rota entries will remain unchanged.")) {
+      remove.closest(".directory-doctor").remove();
+    }
+    if (add || remove) { directoryDirty = true; $("directoryStatus").textContent = "Unsaved directory changes"; }
+  });
   $("clearRotaBtn").onclick = clearRota;
   $("saveExtensionsBtn").onclick = saveExtensions;
-  $("rotaSpecialty").onchange = loadRotaSheet;
-  $("rotaMonth").onchange = loadRotaSheet;
+  $("rotaSpecialty").onchange = () => {
+    if ((rotaDirty || directoryDirty) && !confirm("Discard unsaved changes?")) {
+      // The selected specialty has already changed; restore previous selection.
+      $("rotaSpecialty").value = currentSpecialty;
+      return;
+    }
+    currentSpecialty = $("rotaSpecialty").value;
+    loadRotaSheet();
+    renderDoctorDirectory();
+  };
+  let currentSpecialty = $("rotaSpecialty").value;
+  $("rotaMonth").onchange = () => {
+    if (rotaDirty && !confirm("Discard unsaved rota changes?")) {
+      $("rotaMonth").value = currentMonth;
+      return;
+    }
+    currentMonth = $("rotaMonth").value;
+    loadRotaSheet();
+  };
+  let currentMonth = $("rotaMonth").value;
 
   if (localStorage.getItem("oncall-theme") === "light") {
     document.body.classList.add("light");

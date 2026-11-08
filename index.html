@@ -95,16 +95,24 @@
           <thead>
             <tr>
               <th>Date</th>
-              <th>First on-call name</th>
-              <th>First phone</th>
-              <th>Second on-call name</th>
-              <th>Second phone</th>
+              <th>First on-call doctor & phone</th>
+              <th>Second on-call doctor & phone</th>
             </tr>
           </thead>
           <tbody id="rotaRows"></tbody>
         </table>
       </div>
       <p id="rotaStatus" class="status"></p>
+      <section class="directory-panel" aria-label="Doctor directory">
+        <div class="directory-heading">
+          <div><h2>👨‍⚕️ Doctor directory · <span id="directorySpecialtyName"></span></h2>
+            <p class="muted">Maintain separate first and second on-call dropdown lists. Save directory changes before selecting new doctors.</p>
+          </div>
+          <button id="saveDirectoryBtn" class="primary" type="button">Save doctor directory</button>
+        </div>
+        <div id="doctorDirectory" class="directory-grid"></div>
+        <p id="directoryStatus" class="status"></p>
+      </section>
     </section>
 
     <section id="extensionsPage" class="hidden">
