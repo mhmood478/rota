@@ -196,6 +196,7 @@ function showPage(pageId) {
 
   $(pageId).classList.remove("hidden");
   document.body.classList.toggle("display-mode", pageId === "displayPage");
+  applyDisplaySettings();
 }
 
 
@@ -428,9 +429,73 @@ async function saveExtensions() {
   }
 }
 
+
+// Display preferences are intentionally device-local: each TV can have its own layout.
+const DISPLAY_DEFAULTS = { rotation: '0', extensions: 'right', columns: 'auto', text: '100', gap: '12', density: 'normal', heading: true };
+let displaySettings = { ...DISPLAY_DEFAULTS };
+try {
+  const stored = JSON.parse(localStorage.getItem('oncall-display-settings') || '{}');
+  if (stored && typeof stored === 'object') displaySettings = { ...DISPLAY_DEFAULTS, ...stored };
+} catch (_) { /* Ignore invalid old preferences. */ }
+
+function applyDisplaySettings() {
+  const page = $('displayPage');
+  const rotation = [0, 90, 180, 270, 360].includes(Number(displaySettings.rotation)) ? Number(displaySettings.rotation) % 360 : 0;
+  const place = ['left', 'right', 'below', 'hidden'].includes(displaySettings.extensions) ? displaySettings.extensions : 'right';
+  page.dataset.extensions = place;
+  page.dataset.density = displaySettings.density;
+  page.classList.toggle('hide-heading', !displaySettings.heading);
+  page.style.setProperty('--board-gap', `${Number(displaySettings.gap) || 12}px`);
+  page.style.setProperty('--board-font-scale', String((Number(displaySettings.text) || 100) / 100));
+  page.style.setProperty('--board-columns', displaySettings.columns === 'auto' ? 'repeat(3, minmax(0, 1fr))' : `repeat(${Math.min(5, Math.max(1, Number(displaySettings.columns) || 3))}, minmax(0, 1fr))`);
+  document.body.classList.toggle('board-rotated', rotation !== 0 && !$('displayPage').classList.contains('hidden'));
+  page.style.transform = '';
+  page.style.width = '';
+  page.style.height = '';
+  if (rotation !== 0 && !$('displayPage').classList.contains('hidden')) {
+    const w = window.innerWidth, h = window.innerHeight;
+    page.style.width = `${rotation === 180 ? w : h}px`;
+    page.style.height = `${rotation === 180 ? h : w}px`;
+    page.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+  }
+}
+function updateSettingsControls() {
+  for (const key of ['Rotation','Extensions','Columns','Text','Gap','Density']) {
+    const el = $('setting' + key);
+    el.value = displaySettings[key.toLowerCase()];
+  }
+  $('settingHeading').checked = !!displaySettings.heading;
+}
+function saveDisplaySettings() {
+  try { localStorage.setItem('oncall-display-settings', JSON.stringify(displaySettings)); } catch (_) {}
+  applyDisplaySettings();
+}
+function closeDisplaySettings() { $('displaySettings').classList.add('hidden'); $('settingsBtn').focus(); }
+function setupDisplaySettings() {
+  updateSettingsControls();
+  $('settingsBtn').onclick = () => { updateSettingsControls(); $('displaySettings').classList.remove('hidden'); $('closeSettingsBtn').focus(); };
+  $('closeSettingsBtn').onclick = closeDisplaySettings;
+  $('doneSettingsBtn').onclick = closeDisplaySettings;
+  $('displaySettings').addEventListener('click', e => { if (e.target === $('displaySettings')) closeDisplaySettings(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('displaySettings').classList.contains('hidden')) closeDisplaySettings(); });
+  for (const key of ['Rotation','Extensions','Columns','Text','Gap','Density']) {
+    $('setting' + key).addEventListener('change', e => { displaySettings[key.toLowerCase()] = e.target.value; saveDisplaySettings(); });
+  }
+  $('settingHeading').onchange = e => { displaySettings.heading = e.target.checked; saveDisplaySettings(); };
+  $('resetSettingsBtn').onclick = () => { displaySettings = { ...DISPLAY_DEFAULTS }; updateSettingsControls(); saveDisplaySettings(); };
+  $('fullscreenSettingsBtn').onclick = async () => {
+    try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); }
+    catch (error) { alert('Fullscreen unavailable: ' + error.message); }
+  };
+  window.addEventListener('resize', applyDisplaySettings);
+  document.addEventListener('fullscreenchange', applyDisplaySettings);
+  applyDisplaySettings();
+}
+
 document.body.classList.add("display-mode");
 
 function startApp() {
+  setupDisplaySettings();
   $("rotaSpecialty").innerHTML = SPECIALTIES.map(([id, label]) =>
     `<option value="${id}">${label}</option>`
   ).join("");

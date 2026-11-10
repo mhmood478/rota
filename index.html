@@ -12,7 +12,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
-<script defer src="app.js?v=3"></script></head>
+<script defer src="app.js?v=4"></script></head>
 
 <body>
   <header class="app-header">
@@ -34,6 +34,7 @@
         </div>
 
         <div class="display-tools">
+          <button id="settingsBtn" class="settings-trigger" type="button" aria-label="Display settings" title="Display settings">⚙ Settings</button>
           <div class="view-toggle" role="group" aria-label="Display layout">
             <button id="cardsViewBtn" class="view-toggle-btn active" type="button" aria-pressed="true"
               title="Card view">▦ <span>Cards</span></button>
@@ -72,6 +73,22 @@
         </aside>
       </div>
 
+      <div id="displaySettings" class="settings-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <div class="settings-panel">
+          <div class="settings-heading"><div><h2 id="settingsTitle">⚙ Display settings</h2><p class="muted">Customize this screen. Changes save automatically on this device.</p></div><button id="closeSettingsBtn" type="button" aria-label="Close settings">✕</button></div>
+          <div class="settings-fields">
+            <label>Screen rotation <select id="settingRotation"><option value="0">0° · Normal</option><option value="90">90° · Clockwise</option><option value="180">180° · Upside down</option><option value="270">270° · Counterclockwise</option><option value="360">360° · Normal</option></select></label>
+            <label>Extensions placement <select id="settingExtensions"><option value="right">Right of cards</option><option value="left">Left of cards</option><option value="below">Below cards</option><option value="hidden">Hide extensions</option></select></label>
+            <label>Card columns <select id="settingColumns"><option value="auto">Automatic</option><option value="1">1 column</option><option value="2">2 columns</option><option value="3">3 columns</option><option value="4">4 columns</option><option value="5">5 columns</option></select></label>
+            <label>Text size <select id="settingText"><option value="85">Compact · 85%</option><option value="100">Normal · 100%</option><option value="115">Large · 115%</option><option value="130">Extra large · 130%</option><option value="150">Very large · 150%</option></select></label>
+            <label>Card spacing <select id="settingGap"><option value="6">Tight</option><option value="12">Normal</option><option value="20">Spacious</option></select></label>
+            <label>Display density <select id="settingDensity"><option value="compact">Compact</option><option value="normal">Normal</option><option value="comfortable">Comfortable</option></select></label>
+            <label class="settings-check"><input id="settingHeading" type="checkbox"> Show board heading and clock</label>
+          </div>
+          <div class="settings-footer"><button id="resetSettingsBtn" type="button">Restore defaults</button><button id="fullscreenSettingsBtn" type="button">⛶ Toggle fullscreen</button><button id="doneSettingsBtn" class="primary" type="button">Done</button></div>
+          <p class="muted settings-hint">Tip: For portrait-mounted TVs, try 90° or 270°. Settings are stored in this browser, not in Firebase.</p>
+        </div>
+      </div>
       <p id="loadStatus" class="notice">Connecting…</p>
     </section>
 
