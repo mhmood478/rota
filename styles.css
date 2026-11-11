@@ -698,3 +698,35 @@ body.board-rotated #displayPage .display-layout { height:auto !important; }
 .common-edit-head { color: var(--muted, #9ca3af); font-size: .85rem; }
 .common-edit-row input { width: 100%; min-width: 0; box-sizing: border-box; }
 @media(max-width:600px) { .common-edit-row,.common-edit-head { grid-template-columns: 52px minmax(95px,2fr) minmax(75px,1fr) 65px; gap: 5px; } .common-edit-row button { padding: 8px 3px; font-size: .75rem; } }
+
+/* TV display: extension numbers remain prominent; phone numbers retain their
+   softer, lightly spaced style and scale with the Display Settings slider. */
+#displayPage {
+  --board-extension-size: calc(1.0rem * var(--board-font-scale, 1));
+  --board-phone-size: calc(1.0rem * var(--board-font-scale, 1));
+}
+#displayPage .specialty-card .extension,
+body.display-mode #displayPage .specialty-card .extension,
+body.display-mode.rows-view #displayPage .table-doctor .extension,
+#displayPage .extension-list strong {
+  font-size: var(--board-extension-size) !important;
+  font-weight: 800;
+  letter-spacing: .015em;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+#displayPage .specialty-card .details,
+body.display-mode #displayPage .specialty-card .details,
+body.display-mode.rows-view #displayPage .table-doctor .details {
+  font-size: var(--board-phone-size) !important;
+  font-weight: 650;
+  letter-spacing: .055em;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--accent2) 75%, var(--muted) 25%);
+  overflow-wrap: anywhere;
+}
+#displayPage .specialty-card .details { display: inline-block; margin-top: 3px; }
+#displayPage .oncall > div:first-child { min-width: 0; }
+#displayPage .oncall { grid-template-columns: minmax(0, 1fr) auto; }
+#displayPage .extension { overflow-wrap: anywhere; }
