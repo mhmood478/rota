@@ -12,7 +12,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
-<script defer src="app.js?v=5"></script></head>
+<script defer src="app.js?v=4"></script></head>
 
 <body>
   <header class="app-header">
@@ -53,23 +53,7 @@
 
         <aside class="common-extensions" aria-labelledby="commonExtensionsTitle">
           <h2 id="commonExtensionsTitle">☎ Common extensions</h2>
-          <ul class="extension-list">
-            <li><span class="extension-icon">🩻</span><span>X-ray</span><strong>4605</strong></li>
-            <li><span class="extension-icon">🧠</span><span>CT</span><strong>4813</strong></li>
-            <li><span class="extension-icon">📋</span><span>Medical records</span><strong>5242</strong></li>
-            <li><span class="extension-icon">🧑‍💼</span><span>Supervisor</span><strong>555</strong></li>
-            <li><span class="extension-icon">🛡️</span><span>PRO</span><strong>5006</strong></li>
-
-            <li><span class="extension-icon">🧪</span><span>Laboratory</span><strong>----</strong></li>
-            <li><span class="extension-icon">🩸</span><span>Blood Bank</span><strong>----</strong></li>
-            <li><span class="extension-icon">💊</span><span>Pharmacy</span><strong>----</strong></li>
-            <li><span class="extension-icon">🧹</span><span>Housekeeping</span><strong>----</strong></li>
-            <li><span class="extension-icon">🔧</span><span>Maintenance</span><strong>----</strong></li>
-
-
-
-            <!-- Add more extensions by copying a <li> above and editing its contents. -->
-          </ul>
+          <ul class="extension-list" id="commonExtensionsList"></ul>
         </aside>
       </div>
 
@@ -141,6 +125,15 @@
       </div>
       <div id="extensionsEditor" class="ext-grid"></div>
       <p id="extensionsStatus" class="status"></p>
+      <section class="common-editor-section">
+        <div class="editor-head">
+          <div><h2>Common extensions</h2><p class="muted">Add, edit or delete shared department extensions. Changes appear on all connected displays after saving.</p></div>
+          <div class="common-editor-actions"><button id="addCommonExtensionBtn" type="button">+ Add extension</button><button id="saveCommonExtensionsBtn" class="primary" type="button">Save common extensions</button></div>
+        </div>
+        <div class="common-edit-head"><span>Icon</span><span>Department</span><span>Extension</span><span></span></div>
+        <div id="commonExtensionsEditor"></div>
+        <p id="commonExtensionsStatus" class="status" aria-live="polite"></p>
+      </section>
     </section>
   </main>
 

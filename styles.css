@@ -690,3 +690,11 @@ body.board-rotated main { margin:0 !important; padding:0 !important; width:100% 
 body.board-rotated #displayPage { position:fixed !important; top:50%; left:50%; margin:0 !important; padding:12px !important; box-sizing:border-box; overflow:auto; max-width:none !important; z-index:900; transform-origin:center center; background:var(--bg); }
 body.board-rotated #displayPage .display-layout { height:auto !important; }
 @media(max-width:650px) { .settings-fields { grid-template-columns:1fr; } #displayPage[data-extensions="left"] .display-layout,#displayPage[data-extensions="right"] .display-layout { grid-template-columns:minmax(0,1fr) !important; } #displayPage[data-extensions="left"] .common-extensions,#displayPage[data-extensions="left"] #displayGrid { grid-column:1; grid-row:auto; } }
+
+/* Shared common-extension editor */
+.common-editor-section { margin-top: 28px; }
+.common-editor-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.common-edit-row, .common-edit-head { display: grid; grid-template-columns: 75px minmax(130px,2fr) minmax(100px,1fr) 90px; gap: 10px; align-items: center; margin-bottom: 9px; }
+.common-edit-head { color: var(--muted, #9ca3af); font-size: .85rem; }
+.common-edit-row input { width: 100%; min-width: 0; box-sizing: border-box; }
+@media(max-width:600px) { .common-edit-row,.common-edit-head { grid-template-columns: 52px minmax(95px,2fr) minmax(75px,1fr) 65px; gap: 5px; } .common-edit-row button { padding: 8px 3px; font-size: .75rem; } }

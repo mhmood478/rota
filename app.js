@@ -40,6 +40,58 @@ const defaultExtensions = Object.fromEntries(
   SPECIALTIES.map(([key]) => [key, { first: "", second: "" }])
 );
 
+const DEFAULT_COMMON_EXTENSIONS = [
+  { id: 'xray', icon: '🩻', name: 'X-ray', number: '4605' },
+  { id: 'ct', icon: '🧠', name: 'CT', number: '4813' },
+  { id: 'records', icon: '📋', name: 'Medical records', number: '5242' },
+  { id: 'supervisor', icon: '🧑‍💼', name: 'Supervisor', number: '555' },
+  { id: 'pro', icon: '🛡️', name: 'PRO', number: '5006' },
+  { id: 'lab', icon: '🧪', name: 'Laboratory', number: '' },
+  { id: 'blood', icon: '🩸', name: 'Blood Bank', number: '' },
+  { id: 'pharmacy', icon: '💊', name: 'Pharmacy', number: '' },
+  { id: 'housekeeping', icon: '🧹', name: 'Housekeeping', number: '' },
+  { id: 'maintenance', icon: '🔧', name: 'Maintenance', number: '' }
+];
+let commonExtensionsDirty = false;
+function commonExtensions() {
+  return Array.isArray(appData.commonExtensions) ? appData.commonExtensions : DEFAULT_COMMON_EXTENSIONS;
+}
+function renderCommonExtensions() {
+  $('commonExtensionsList').innerHTML = commonExtensions().map(item =>
+    `<li><span class="extension-icon">${escapeHtml(item.icon || '☎️')}</span><span>${escapeHtml(item.name)}</span><strong>${escapeHtml(item.number || '----')}</strong></li>`
+  ).join('');
+}
+function renderCommonExtensionsEditor() {
+  if (commonExtensionsDirty) return;
+  $('commonExtensionsEditor').innerHTML = commonExtensions().map(item => commonExtensionRow(item)).join('');
+}
+function commonExtensionRow(item = {}) {
+  return `<div class="common-edit-row" data-id="${escapeHtml(item.id || crypto.randomUUID())}">
+    <input class="common-icon" aria-label="Icon" placeholder="☎️" value="${escapeHtml(item.icon || '')}">
+    <input class="common-name" aria-label="Department" placeholder="Department" value="${escapeHtml(item.name || '')}">
+    <input class="common-number" aria-label="Extension number" placeholder="Extension" inputmode="tel" value="${escapeHtml(item.number || '')}">
+    <button type="button" class="common-delete danger" title="Delete extension">Delete</button>
+  </div>`;
+}
+async function saveCommonExtensions() {
+  if (!db) return alert('Firebase is not connected.');
+  const items = [...document.querySelectorAll('#commonExtensionsEditor .common-edit-row')].map(row => ({
+    id: row.dataset.id, icon: row.querySelector('.common-icon').value.trim(),
+    name: row.querySelector('.common-name').value.trim(), number: row.querySelector('.common-number').value.trim()
+  }));
+  if (items.some(item => !item.name)) return alert('Enter a department name for every row, or delete empty rows.');
+  const button = $('saveCommonExtensionsBtn'); button.disabled = true;
+  try {
+    await recordRef().set({ commonExtensions: items }, { merge: true });
+    commonExtensionsDirty = false;
+    $('commonExtensionsStatus').textContent = 'Common extensions saved successfully ✓';
+    alert('✅ Common extensions saved successfully!');
+  } catch (error) {
+    $('commonExtensionsStatus').textContent = 'Save failed: ' + error.message;
+    alert('❌ Failed to save common extensions:\n' + error.message);
+  } finally { button.disabled = false; }
+}
+
 let db = null;
 let appData = { rotas: {}, extensions: defaultExtensions, doctors: {} };
 let rotaDirty = false;
@@ -86,6 +138,7 @@ function initFirebase() {
     appData.doctors ||= {};
     $("loadStatus").textContent = "Live data connected.";
     renderDisplay();
+    if (!commonExtensionsDirty) renderCommonExtensionsEditor();
 
     if (!$("rotaPage").classList.contains("hidden")) {
       if (!rotaDirty) loadRotaSheet();
@@ -105,6 +158,7 @@ function getEffectiveDate() {
 }
 
 function renderDisplay() {
+  renderCommonExtensions();
   const date = getEffectiveDate();
   const month = monthKey(date);
   const day = String(date.getDate());
@@ -536,6 +590,25 @@ function startApp() {
   });
   $("clearRotaBtn").onclick = clearRota;
   $("saveExtensionsBtn").onclick = saveExtensions;
+  $("saveCommonExtensionsBtn").onclick = saveCommonExtensions;
+  $("addCommonExtensionBtn").onclick = () => {
+    $("commonExtensionsEditor").insertAdjacentHTML('beforeend', commonExtensionRow());
+    commonExtensionsDirty = true;
+    $("commonExtensionsStatus").textContent = 'Unsaved changes';
+    $("commonExtensionsEditor").lastElementChild.querySelector('.common-name').focus();
+  };
+  $("commonExtensionsEditor").addEventListener('input', () => {
+    commonExtensionsDirty = true;
+    $("commonExtensionsStatus").textContent = 'Unsaved changes';
+  });
+  $("commonExtensionsEditor").addEventListener('click', event => {
+    if (!event.target.closest('.common-delete')) return;
+    if (!confirm('Delete this common extension? Save changes to apply.')) return;
+    event.target.closest('.common-edit-row').remove();
+    commonExtensionsDirty = true;
+    $("commonExtensionsStatus").textContent = 'Unsaved changes';
+  });
+  renderCommonExtensionsEditor();
   $("rotaSpecialty").onchange = () => {
     if ((rotaDirty || directoryDirty) && !confirm("Discard unsaved changes?")) {
       // The selected specialty has already changed; restore previous selection.
